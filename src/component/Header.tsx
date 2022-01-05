@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import i18n from 'i18next';
 import '../locales/i18n';
-import {useTranslation} from 'react-i18next';
+// import {useTranslation} from 'react-i18next';
 import {Helmet, HelmetProvider} from 'react-helmet-async';
 import styles from './Header.module.scss';
 
@@ -14,7 +14,7 @@ const langName = {
 
 export function Header() {
   const [lang, setLang] = useState(i18n.language);
-  const {t} = useTranslation();
+  // const {t} = useTranslation();
 
   return (
     <header className={styles.header}>
