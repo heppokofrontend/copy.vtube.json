@@ -9,12 +9,14 @@ const resources = {
     translation: {
       '移植元.vtube.json': 'template.vtube.json',
       '移植先.vtube.json': 'new-model.vtube.json',
+      'ここにファイルをドロップしてください': 'Drop here!',
     },
   },
   ja: {
     translation: {
       '移植元.vtube.json': '移植元.vtube.json',
       '移植先.vtube.json': '移植先.vtube.json',
+      'ここにファイルをドロップしてください': 'ここにファイルをドロップしてください',
     },
   },
 };

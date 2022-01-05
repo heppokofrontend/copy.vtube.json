@@ -1,3 +1,25 @@
+.filter {
+  padding: 20px 20px 18px;
+  margin: 0 0 40px;
+  width: fit-content;
+  background: #fff;
+  border-radius: 6px;
+
+  .list {
+    display: flex;
+    margin: 0 0 0 -20px;
+  }
+
+  .listitem {
+    padding: 0 0 0 20px;
+    list-style: none;
+  }
+
+  .checkboxLabel {
+    padding: 0 0 0 10px;
+  }
+}
+
 .col {
   margin: 0 0 40px;
 }

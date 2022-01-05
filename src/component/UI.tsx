@@ -8,6 +8,8 @@ export function UI() {
   const [sourceFileName, setSourceFileName] = useState('');
   const [target, setTarget] = useState('');
   const [result, setResult] = useState('');
+  const [isNeedVTSParam, setIsNeedVTSParam] = useState(true);
+  const [isNeedKeyBindParam, setIsNeedKeyBindParam] = useState(true);
   const [isCompleted, setIsCompleted] = useState(false);
   const sourceTextArea = useRef(null) as unknown as React.MutableRefObject<HTMLTextAreaElement>;
   const targetTextarea = useRef(null) as unknown as React.MutableRefObject<HTMLTextAreaElement>;
@@ -26,7 +28,7 @@ export function UI() {
     fr.readAsText(file);
     setSourceFileName(file.name);
   }
-  const makeNewVtubeJson = () => {
+  const makeNewVtubeJson = (options: any = {}) => {
     try {
       if (
         !sourceTextArea.current?.value ||
@@ -38,14 +40,23 @@ export function UI() {
         return;
       }
 
-      const sourceJson = JSON.parse(sourceTextArea.current.value);
+      const useSrcVTS = (options.isNeedVTSParam ?? isNeedVTSParam);
+      const useSrcHotKey = (options.isNeedKeyBindParam ?? isNeedKeyBindParam);
+      const sourceJSON = JSON.parse(sourceTextArea.current.value);
       const targetJSON = JSON.parse(targetTextarea.current.value);
+      const resultJSON = useSrcVTS ? sourceJSON : targetJSON;
 
-      sourceJson.Name = targetJSON.Name;
-      sourceJson.ModelID = targetJSON.ModelID;
-      sourceJson.FileReferences = targetJSON.FileReferences;
+      if (useSrcHotKey) {
+        resultJSON.Hotkeys = sourceJSON.Hotkeys;
+      } else {
+        resultJSON.Hotkeys = targetJSON.Hotkeys;
+      }
 
-      setResult(JSON.stringify(sourceJson, undefined, '  '));
+      resultJSON.Name = targetJSON.Name;
+      resultJSON.ModelID = targetJSON.ModelID;
+      resultJSON.FileReferences = targetJSON.FileReferences;
+
+      setResult(JSON.stringify(resultJSON, undefined, '    '));
       setIsCompleted(true);
     } catch (e) {
       setResult('ERROR');
@@ -104,70 +115,103 @@ export function UI() {
   })();
 
   return (
-    <div className={styles.wrap}>
-      <div className={styles.col}>
-        <label>
-          <span id="label-source" className={styles.label}>{t('移植元.vtube.json')}</span>
-          <textarea
-            className={styles.textarea}
-            ref={sourceTextArea}
-            value={source}
-            onDrop={ondrop(setSource, sourceInput)}
-            onDragOver={ondragover}
-            onDragLeave={ondragleave}
-            readOnly
-          />
-        </label>
-        <input
-          type="file"
-          ref={sourceInput}
-          className={styles.input}
-          accept="application/json"
-          onChange={onchange(setSource)}
-          aria-labelledby="label-source"
-        />
+    <>
+      <div className={styles.filter}>
+        <ul className={styles.list}>
+          <li className={styles.listitem}>
+            <label>
+              <input type="checkbox" checked={isNeedVTSParam} onChange={() => {
+                setIsNeedVTSParam(!isNeedVTSParam);
+                makeNewVtubeJson({
+                  isNeedVTSParam: !isNeedVTSParam,
+                  isNeedKeyBindParam: isNeedKeyBindParam,
+                });
+              }} />
+              <span className={styles.checkboxLabel}>VTSパラメータ</span>
+            </label>
+          </li>
+          <li className={styles.listitem}>
+            <label>
+              <input type="checkbox" checked={isNeedKeyBindParam} onChange={() => {
+                setIsNeedKeyBindParam(!isNeedKeyBindParam);
+                makeNewVtubeJson({
+                  isNeedVTSParam: isNeedVTSParam,
+                  isNeedKeyBindParam: !isNeedKeyBindParam,
+                });
+              }} />
+              <span className={styles.checkboxLabel}>キーバインド</span>
+            </label>
+          </li>
+        </ul>
       </div>
-      <div className={styles.col}>
-        <label>
-          <span id="label-target" className={styles.label}>{t('移植先.vtube.json')}</span>
-          <textarea
-            className={styles.textarea}
-            ref={targetTextarea}
-            value={target}
-            onDrop={ondrop(setTarget, targetInput)}
-            onDragOver={ondragover}
-            onDragLeave={ondragleave}
-            readOnly
-          />
-        </label>
-        <input
-          type="file"
-          ref={targetInput}
-          className={styles.input}
-          accept="application/json"
-          onChange={onchange(setTarget)}
-          aria-labelledby="label-target"
-        />
-      </div>
-      <div className={styles.col}>
-        <label>
-          <span className={styles.label}>Result</span>
-          <textarea
-            className={styles.textarea}
-            value={result}
-            readOnly
-          />
-        </label>
 
-        <button
-          type="button"
-          className={styles.download}
-          onClick={download}
-          disabled={!isCompleted}
-        >
-          Download
-        </button>
+      <div className={styles.wrap}>
+        <div className={styles.col}>
+          <label>
+            <span id="label-source" className={styles.label}>{t('移植元.vtube.json')}</span>
+            <textarea
+              className={styles.textarea}
+              ref={sourceTextArea}
+              value={source}
+              placeholder={t('ここにファイルをドロップしてください')}
+              onDrop={ondrop(setSource, sourceInput)}
+              onDragOver={ondragover}
+              onDragLeave={ondragleave}
+              readOnly
+            />
+          </label>
+          <input
+            type="file"
+            ref={sourceInput}
+            className={styles.input}
+            accept="application/json"
+            onChange={onchange(setSource)}
+            aria-labelledby="label-source"
+          />
+        </div>
+        <div className={styles.col}>
+          <label>
+            <span id="label-target" className={styles.label}>{t('移植先.vtube.json')}</span>
+            <textarea
+              className={styles.textarea}
+              ref={targetTextarea}
+              value={target}
+              placeholder={t('ここにファイルをドロップしてください')}
+              onDrop={ondrop(setTarget, targetInput)}
+              onDragOver={ondragover}
+              onDragLeave={ondragleave}
+              readOnly
+            />
+          </label>
+          <input
+            type="file"
+            ref={targetInput}
+            className={styles.input}
+            accept="application/json"
+            onChange={onchange(setTarget)}
+            aria-labelledby="label-target"
+          />
+        </div>
+        <div className={styles.col}>
+          <label>
+            <span className={styles.label}>Result</span>
+            <textarea
+              className={styles.textarea}
+              value={result}
+              readOnly
+            />
+          </label>
+
+          <button
+            type="button"
+            className={styles.download}
+            onClick={download}
+            disabled={!isCompleted}
+          >
+            Download
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
