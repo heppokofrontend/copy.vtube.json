@@ -1,0 +1,51 @@
+.header {
+  padding: 10px 20px;
+  margin: 0 0 30px;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, .8);
+
+  h1 {
+    grid-column: 2 / 3;
+    font-size: 100%;
+    font-weight: normal;
+    color: #757575;
+  }
+
+  a {
+    margin: 0 8px 0 0;
+    color: inherit;
+    font-size: 12px;
+  }
+
+  button {
+    padding: 4px 8px;
+    font-size: 14px;
+    color: #555;
+    background: transparent;
+    border: 1px solid #777;
+    appearance: none;
+  }
+
+  @media screen and (min-width: 500px) {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+
+    .p {
+      grid-column: 3 / 4;
+    }
+
+    a,
+    button {
+      display: block;
+      text-align: right;
+      width: fit-content;
+      margin-left: auto;
+    }
+
+    a {
+      margin: 0 0 8px auto;
+    }
+  }
+}

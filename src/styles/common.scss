@@ -1,0 +1,65 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html[lang="en"] body {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Yu Gothic", YuGothic, Verdana, Meiryo, sans-serif;
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.6;
+  background: linear-gradient(-45deg,
+    #fee4e3 6.25%, #fee4e3 6.25%,
+    #fee4e3 12.5%, #fee4e3 12.5%,
+    #fee4e3 18.75%, #fff 18.75%,
+    #fff 25%, #fee4e3 25%,
+    #fee4e3 31.25%, #fee4e3 31.25%,
+    #fee4e3 37.5%, #fee4e3 37.5%,
+    #fee4e3 43.75%, #fff 43.75%,
+    #fff 50%, #fee4e3 50%,
+    #fee4e3 56.25%, #fee4e3 56.25%,
+    #fee4e3 62.5%, #fee4e3 62.5%,
+    #fee4e3 68.75%, #fff 68.75%,
+    #fff 75%, #fee4e3 75%,
+    #fee4e3 81.25%, #fee4e3 81.25%,
+    #fee4e3 87.5%, #fee4e3 87.5%,
+    #fee4e3 93.75%, #fff 93.75%,
+    #fff
+  ) 0 0 / 100px 100px;
+}
+
+#root {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  > header {
+    grid-row: 1 / 2;
+  }
+
+  > main {
+    grid-row: 2 / 3;
+    padding: 10px 20px;
+  }
+
+  > footer {
+    grid-row: 3 / 4;
+  }
+}
+
+input,
+select {
+  font-size: 100%;
+}
+
+button {
+  appearance: none;
+}
+
+:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 6px rgb(50, 178, 201);
+}
