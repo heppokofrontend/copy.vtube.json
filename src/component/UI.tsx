@@ -27,7 +27,10 @@ export function UI() {
       makeNewVtubeJson();
     };
     fr.readAsText(file);
-    setSourceFileName(file.name);
+
+    if (targetInput.current.files?.[0]?.name) {
+      setSourceFileName(targetInput.current.files[0].name);
+    }
   }
   const makeNewVtubeJson = (options: any = {}) => {
     try {
