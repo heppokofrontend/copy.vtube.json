@@ -44,8 +44,9 @@ export function UI() {
       const sourceValue = sourceTextArea.current.value;
       const sourceJSON = JSON.parse(sourceValue);
       const targetJSON = JSON.parse(targetTextarea.current.value);
+      const isReplaceOnly = (options.isStaticReplace ?? isStaticReplace);
 
-      if (isStaticReplace) {
+      if (isReplaceOnly) {
         // ! JSON.parseをすると小数点が削れたり、繰り上がったりするので文字列として処理する
         // "Name": "**********",
         // "ModelID": "**********",
@@ -162,11 +163,6 @@ export function UI() {
                   setIsNeedVTSParam(true);
                   setIsNeedKeyBindParam(true);
                   setIsStaticReplace(!isStaticReplace);
-
-                  if (isStaticReplace) {
-                    return;
-                  }
-
                   makeNewVtubeJson({
                     isStaticReplace: !isStaticReplace,
                     isNeedVTSParam: true,
