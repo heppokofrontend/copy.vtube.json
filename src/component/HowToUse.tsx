@@ -19,6 +19,8 @@ export function HowToUse() {
 
       <h2>🔰 使い方</h2>
 
+      <p>⚠「animations」「expressions」フォルダが引き継ぎ元にある場合は、引き継ぎ先にもコピーしておく必要があります。</p>
+
       <ol>
       <li>引き継ぎ元の<b>「●●●.vtube.json」</b>を<b>「{t('移植元.vtube.json')}」</b>に指定します</li>
       <li>引き継ぎ先の<b>「●●●.vtube.json」</b>を<b>「{t('移植先.vtube.json')}」</b>に指定します</li>
