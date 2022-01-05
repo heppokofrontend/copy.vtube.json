@@ -1,4 +1,4 @@
-import React, { useState, useRef, ChangeEventHandler, DragEventHandler } from 'react';
+import React, { useState, useRef, ChangeEventHandler, DragEventHandler, FocusEventHandler } from 'react';
 import styles from './UI.module.scss';
 import {useTranslation} from 'react-i18next';
 
@@ -8,6 +8,7 @@ export function UI() {
   const [sourceFileName, setSourceFileName] = useState('');
   const [target, setTarget] = useState('');
   const [result, setResult] = useState('');
+  const [isStaticReplace, setIsStaticReplace] = useState(true);
   const [isNeedVTSParam, setIsNeedVTSParam] = useState(true);
   const [isNeedKeyBindParam, setIsNeedKeyBindParam] = useState(true);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -40,23 +41,54 @@ export function UI() {
         return;
       }
 
-      const useSrcVTS = (options.isNeedVTSParam ?? isNeedVTSParam);
-      const useSrcHotKey = (options.isNeedKeyBindParam ?? isNeedKeyBindParam);
-      const sourceJSON = JSON.parse(sourceTextArea.current.value);
+      const sourceValue = sourceTextArea.current.value;
+      const sourceJSON = JSON.parse(sourceValue);
       const targetJSON = JSON.parse(targetTextarea.current.value);
-      const resultJSON = useSrcVTS ? sourceJSON : targetJSON;
 
-      if (useSrcHotKey) {
-        resultJSON.Hotkeys = sourceJSON.Hotkeys;
+      if (isStaticReplace) {
+        // ! JSON.parseをすると小数点が削れたり、繰り上がったりするので文字列として処理する
+        // "Name": "**********",
+        // "ModelID": "**********",
+        // "FileReferences": {
+        //     "Icon": "**********",
+        //     "Model": "**********.model3.json",
+        //     "IdleAnimation": "**********",
+        //     "IdleAnimationWhenTrackingLost": "**********"
+        // },
+
+        const patterns = [
+          [new RegExp(`"Icon"?\\s*:\\s*".*?${sourceJSON.FileReferences.Icon}"`, 'u'), `"Icon": "${targetJSON.FileReferences.Icon}"`],
+          [new RegExp(`"Model"?\\s*:\\s*".*?${sourceJSON.FileReferences.Model}"`, 'u'), `"Model": "${targetJSON.FileReferences.Model}"`],
+          [new RegExp(`"IdleAnimation"?\\s*:\\s*".*?${sourceJSON.FileReferences.IdleAnimation}"`, 'u'), `"IdleAnimation": "${targetJSON.FileReferences.IdleAnimation}"`],
+          [new RegExp(`"IdleAnimationWhenTrackingLost"?\\s*:\\s*".*?${sourceJSON.FileReferences.IdleAnimationWhenTrackingLost}"`, 'u'), `"IdleAnimationWhenTrackingLost": "${targetJSON.FileReferences.IdleAnimationWhenTrackingLost}"`],
+          [new RegExp(`"ModelID"?\\s*:\\s*".*?${sourceJSON.ModelID}"`, 'u'), `"ModelID": "${targetJSON.ModelID}"`],
+          [new RegExp(`"Name"?\\s*:\\s*".*?${sourceJSON.Name}"`, 'u'), `"Name": "${targetJSON.Name}"`],
+        ] as [RegExp, string][];
+        let resultJSON = sourceValue;
+
+        for (const [regExp, replacement] of patterns) {
+          resultJSON = resultJSON.replace(regExp, replacement);
+        }
+
+        setResult(resultJSON);
       } else {
-        resultJSON.Hotkeys = targetJSON.Hotkeys;
+        const useSrcVTS = (options.isNeedVTSParam ?? isNeedVTSParam);
+        const useSrcHotKey = (options.isNeedKeyBindParam ?? isNeedKeyBindParam);
+        const resultJSON = useSrcVTS ? sourceJSON : targetJSON;
+
+        if (useSrcHotKey) {
+          resultJSON.Hotkeys = sourceJSON.Hotkeys;
+        } else {
+          resultJSON.Hotkeys = targetJSON.Hotkeys;
+        }
+
+        resultJSON.Name = targetJSON.Name;
+        resultJSON.ModelID = targetJSON.ModelID;
+        resultJSON.FileReferences = targetJSON.FileReferences;
+
+        setResult(JSON.stringify(resultJSON, undefined, '    '));
       }
 
-      resultJSON.Name = targetJSON.Name;
-      resultJSON.ModelID = targetJSON.ModelID;
-      resultJSON.FileReferences = targetJSON.FileReferences;
-
-      setResult(JSON.stringify(resultJSON, undefined, '    '));
       setIsCompleted(true);
     } catch (e) {
       setResult('ERROR');
@@ -97,6 +129,9 @@ export function UI() {
     e.stopPropagation();
     (e.target as HTMLTextAreaElement).style.background = '';
   } as DragEventHandler<HTMLTextAreaElement>;
+  const onfocus = function (e) {
+    e.target.select();
+  } as FocusEventHandler<HTMLTextAreaElement>
   const download = (() => {
     const a = document.createElement('a');
     const {body} = document;
@@ -120,26 +155,62 @@ export function UI() {
         <ul className={styles.list}>
           <li className={styles.listitem}>
             <label>
-              <input type="checkbox" checked={isNeedVTSParam} onChange={() => {
-                setIsNeedVTSParam(!isNeedVTSParam);
-                makeNewVtubeJson({
-                  isNeedVTSParam: !isNeedVTSParam,
-                  isNeedKeyBindParam: isNeedKeyBindParam,
-                });
-              }} />
-              <span className={styles.checkboxLabel}>VTSパラメータ</span>
+              <input
+                type="checkbox"
+                checked={isStaticReplace}
+                onChange={() => {
+                  setIsNeedVTSParam(true);
+                  setIsNeedKeyBindParam(true);
+                  setIsStaticReplace(!isStaticReplace);
+
+                  if (isStaticReplace) {
+                    return;
+                  }
+
+                  makeNewVtubeJson({
+                    isStaticReplace: !isStaticReplace,
+                    isNeedVTSParam: true,
+                    isNeedKeyBindParam: true,
+                  });
+                }}
+              />
+              <span className={styles.checkboxLabel}>{t('静的な置換のみを行う')}</span>
             </label>
           </li>
           <li className={styles.listitem}>
             <label>
-              <input type="checkbox" checked={isNeedKeyBindParam} onChange={() => {
-                setIsNeedKeyBindParam(!isNeedKeyBindParam);
-                makeNewVtubeJson({
-                  isNeedVTSParam: isNeedVTSParam,
-                  isNeedKeyBindParam: !isNeedKeyBindParam,
-                });
-              }} />
-              <span className={styles.checkboxLabel}>キーバインド</span>
+              <input
+                type="checkbox"
+                checked={isNeedVTSParam}
+                onChange={() => {
+                  setIsNeedVTSParam(!isNeedVTSParam);
+                  makeNewVtubeJson({
+                    isStaticReplace,
+                    isNeedVTSParam: !isNeedVTSParam,
+                    isNeedKeyBindParam,
+                  });
+                }}
+                disabled={isStaticReplace}
+              />
+              <span className={styles.checkboxLabel}>{t('VTSパラメータ')}</span>
+            </label>
+          </li>
+          <li className={styles.listitem}>
+            <label>
+              <input
+                type="checkbox"
+                checked={isNeedKeyBindParam}
+                onChange={() => {
+                  setIsNeedKeyBindParam(!isNeedKeyBindParam);
+                  makeNewVtubeJson({
+                    isStaticReplace,
+                    isNeedVTSParam,
+                    isNeedKeyBindParam: !isNeedKeyBindParam,
+                  });
+                }}
+                disabled={isStaticReplace}
+              />
+              <span className={styles.checkboxLabel}>{t('キーバインド')}</span>
             </label>
           </li>
         </ul>
@@ -157,6 +228,7 @@ export function UI() {
               onDrop={ondrop(setSource, sourceInput)}
               onDragOver={ondragover}
               onDragLeave={ondragleave}
+              onFocus={onfocus}
               readOnly
             />
           </label>
@@ -180,6 +252,7 @@ export function UI() {
               onDrop={ondrop(setTarget, targetInput)}
               onDragOver={ondragover}
               onDragLeave={ondragleave}
+              onFocus={onfocus}
               readOnly
             />
           </label>
@@ -198,6 +271,7 @@ export function UI() {
             <textarea
               className={styles.textarea}
               value={result}
+              onFocus={onfocus}
               readOnly
             />
           </label>

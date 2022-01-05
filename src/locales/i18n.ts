@@ -10,6 +10,9 @@ const resources = {
       '移植元.vtube.json': 'template.vtube.json',
       '移植先.vtube.json': 'new-model.vtube.json',
       'ここにファイルをドロップしてください': 'Drop here!',
+      '静的な置換のみを行う': 'Only replacing as string',
+      'VTSパラメータ': 'VTS Params',
+      'キーバインド': 'Hot Key Params',
     },
   },
   ja: {
@@ -17,6 +20,9 @@ const resources = {
       '移植元.vtube.json': '移植元.vtube.json',
       '移植先.vtube.json': '移植先.vtube.json',
       'ここにファイルをドロップしてください': 'ここにファイルをドロップしてください',
+      '静的な置換のみを行う': '静的な置換のみを行う',
+      'VTSパラメータ': 'VTSパラメータ',
+      'キーバインド': 'キーバインド',
     },
   },
 };
