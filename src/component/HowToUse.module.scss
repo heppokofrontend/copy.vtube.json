@@ -1,0 +1,48 @@
+.wrap {
+  padding: 30px 20px 60px;
+  margin: 50px auto 0;
+  width: fit-content;
+  max-width: 1280px;
+  background: #fff;
+  border-radius: 6px;
+
+  h2 {
+    margin: 0 0 1em;
+    font-size: 26px;
+    font-weight: normal;
+
+    &:not(:first-child) {
+      margin-top: 3em;
+    }
+  }
+
+  h3 {
+    padding: 4px 8px 2px;
+    margin: 2em 0 1em;
+    font-size: 22px;
+    font-weight: normal;
+    background: #f1f1f1;
+  }
+
+  h4 {
+    margin: 2em 0 1em;
+    font-size: 20px;
+    font-weight: normal;
+  }
+
+  h3 + h4 {
+    margin-top: 1.5em;
+  }
+
+  ol, ul {
+    margin: 1em 0;
+    padding: 0 0 0 1.5em;
+  }
+
+  code {
+    padding: .2em .4em;
+    font-size: 80%;
+    word-break: break-all;
+    background: #eee;
+  }
+}

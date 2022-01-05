@@ -42,8 +42,9 @@ export function UI() {
       }
 
       const sourceValue = sourceTextArea.current.value;
+      const targetValue = targetTextarea.current.value;
       const sourceJSON = JSON.parse(sourceValue);
-      const targetJSON = JSON.parse(targetTextarea.current.value);
+      const targetJSON = JSON.parse(targetValue);
       const isReplaceOnly = (options.isStaticReplace ?? isStaticReplace);
 
       if (isReplaceOnly) {
@@ -57,13 +58,19 @@ export function UI() {
         //     "IdleAnimationWhenTrackingLost": "**********"
         // },
 
+        if (/\\/.test(sourceValue + targetValue)) {
+          setResult(`申し訳ございません。現在のバージョンでは「\\」が含まれているJSONをサポートしていません。`);
+
+          return;
+        }
+
         const patterns = [
-          [new RegExp(`"Icon"?\\s*:\\s*".*?${sourceJSON.FileReferences.Icon}"`, 'u'), `"Icon": "${targetJSON.FileReferences.Icon}"`],
-          [new RegExp(`"Model"?\\s*:\\s*".*?${sourceJSON.FileReferences.Model}"`, 'u'), `"Model": "${targetJSON.FileReferences.Model}"`],
-          [new RegExp(`"IdleAnimation"?\\s*:\\s*".*?${sourceJSON.FileReferences.IdleAnimation}"`, 'u'), `"IdleAnimation": "${targetJSON.FileReferences.IdleAnimation}"`],
-          [new RegExp(`"IdleAnimationWhenTrackingLost"?\\s*:\\s*".*?${sourceJSON.FileReferences.IdleAnimationWhenTrackingLost}"`, 'u'), `"IdleAnimationWhenTrackingLost": "${targetJSON.FileReferences.IdleAnimationWhenTrackingLost}"`],
-          [new RegExp(`"ModelID"?\\s*:\\s*".*?${sourceJSON.ModelID}"`, 'u'), `"ModelID": "${targetJSON.ModelID}"`],
-          [new RegExp(`"Name"?\\s*:\\s*".*?${sourceJSON.Name}"`, 'u'), `"Name": "${targetJSON.Name}"`],
+          [new RegExp(`"Icon"?\\s*:\\s*"${sourceJSON.FileReferences.Icon}"`, 'um'), `"Icon": "${targetJSON.FileReferences.Icon}"`],
+          [new RegExp(`"Model"?\\s*:\\s*"${sourceJSON.FileReferences.Model}"`, 'um'), `"Model": "${targetJSON.FileReferences.Model}"`],
+          [new RegExp(`"IdleAnimation"?\\s*:\\s*"${sourceJSON.FileReferences.IdleAnimation}"`, 'um'), `"IdleAnimation": "${targetJSON.FileReferences.IdleAnimation}"`],
+          [new RegExp(`"IdleAnimationWhenTrackingLost"?\\s*:\\s*"${sourceJSON.FileReferences.IdleAnimationWhenTrackingLost}"`, 'um'), `"IdleAnimationWhenTrackingLost": "${targetJSON.FileReferences.IdleAnimationWhenTrackingLost}"`],
+          [new RegExp(`"ModelID"?\\s*:\\s*"${sourceJSON.ModelID}"`, 'um'), `"ModelID": "${targetJSON.ModelID}"`],
+          [new RegExp(`"Name"?\\s*:\\s*"${sourceJSON.Name}"`, 'um'), `"Name": "${targetJSON.Name}"`],
         ] as [RegExp, string][];
         let resultJSON = sourceValue;
 
@@ -177,24 +184,6 @@ export function UI() {
             <label>
               <input
                 type="checkbox"
-                checked={isNeedVTSParam}
-                onChange={() => {
-                  setIsNeedVTSParam(!isNeedVTSParam);
-                  makeNewVtubeJson({
-                    isStaticReplace,
-                    isNeedVTSParam: !isNeedVTSParam,
-                    isNeedKeyBindParam,
-                  });
-                }}
-                disabled={isStaticReplace}
-              />
-              <span className={styles.checkboxLabel}>{t('VTSパラメータ')}</span>
-            </label>
-          </li>
-          <li className={styles.listitem}>
-            <label>
-              <input
-                type="checkbox"
                 checked={isNeedKeyBindParam}
                 onChange={() => {
                   setIsNeedKeyBindParam(!isNeedKeyBindParam);
@@ -207,6 +196,24 @@ export function UI() {
                 disabled={isStaticReplace}
               />
               <span className={styles.checkboxLabel}>{t('キーバインド')}</span>
+            </label>
+          </li>
+          <li className={styles.listitem}>
+            <label>
+              <input
+                type="checkbox"
+                checked={isNeedVTSParam}
+                onChange={() => {
+                  setIsNeedVTSParam(!isNeedVTSParam);
+                  makeNewVtubeJson({
+                    isStaticReplace,
+                    isNeedVTSParam: !isNeedVTSParam,
+                    isNeedKeyBindParam,
+                  });
+                }}
+                disabled={isStaticReplace}
+              />
+              <span className={styles.checkboxLabel}>{t('VTSパラメータ')}</span>
             </label>
           </li>
         </ul>

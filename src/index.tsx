@@ -5,6 +5,7 @@ import './locales/i18n';
 import {Header} from './component/Header';
 import {Footer} from './component/Footer';
 import {UI} from './component/UI';
+import {HowToUse} from './component/HowToUse';
 import reportWebVitals from './reportWebVitals';
 import './styles/common.scss';
 
@@ -14,8 +15,7 @@ const Main = () => {
   return (
     <main>
       <UI />
-
-
+      <HowToUse />
     </main>
   );
 };

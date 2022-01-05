@@ -7,10 +7,10 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   en: {
     translation: {
-      '移植元.vtube.json': 'template.vtube.json',
-      '移植先.vtube.json': 'new-model.vtube.json',
+      '移植元.vtube.json': '{YOUR BASE MODEL}.vtube.json',
+      '移植先.vtube.json': '{YOUR NEW MODEL}.vtube.json',
       'ここにファイルをドロップしてください': 'Drop here!',
-      '静的な置換のみを行う': 'Only replacing as string',
+      '静的な置換のみを行う': 'Only do replacements as string.',
       'VTSパラメータ': 'VTS Params',
       'キーバインド': 'Hot Key Params',
     },

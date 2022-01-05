@@ -1,12 +1,12 @@
 .header {
-  padding: 10px 20px;
+  padding: 10px 20px 14px;
   margin: 0 0 20px;
   text-align: center;
   background: #fff;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, .8);
 
   h1 {
-    grid-column: 2 / 3;
+    margin: 0 0 4px;
     font-size: 100%;
     font-weight: normal;
     color: #757575;
@@ -28,9 +28,15 @@
   }
 
   @media screen and (min-width: 500px) {
+    padding: 8px 20px 12px;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
+
+    h1 {
+      padding-top: 6px;
+      grid-column: 2 / 3;
+    }
 
     .p {
       grid-column: 3 / 4;
