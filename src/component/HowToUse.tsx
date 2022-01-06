@@ -15,6 +15,11 @@ export function HowToUse() {
 
       <p style={{
         marginTop: '1em',
+      }}>JSONというものは非常に繊細です。カンマのつけ忘れ、クオートの書き間違いなどで容易に壊れてしまいます。</p>
+      <p>手作業の際は、優しく丁寧に扱ってあげてください。</p>
+
+      <p style={{
+        marginTop: '1em',
       }}>不具合のご報告・ご要望などがありましたら、<a href="https://github.com/heppokofrontend/copy.vtube.json/issues/new">Issues</a>または<a href="https://twitter.com/KawarabeEcma">Twitter</a>でお知らせください。</p>
 
       <h2>🔰 使い方</h2>
