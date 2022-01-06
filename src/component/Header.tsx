@@ -25,7 +25,11 @@ export function Header() {
       </HelmetProvider>
 
       <h1 className={styles.h1}>{
-        lang === 'ja' ? 'なんちゃら.vtube.jsonの設定を移植するやつ' : 'copy.vtube.json'
+        lang === 'ja' ? (
+          <img src="/copy-vtube-json/images/h1.png" alt="なんちゃら.vtube.jsonの設定を移植するやつ" className={styles.logo} width="557" height="38" />
+        ) : (
+          <img src="/copy-vtube-json/images/h1--en.png" alt="copy.vtube.json" className={styles.logo} width="207" height="38" />
+        )
       }</h1>
       <p className={styles.p}>
         <a href="/">@heppokofrontend</a>
